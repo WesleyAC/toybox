@@ -1,2 +1,3 @@
 rust_shell/target/*
 rust_shell/Cargo.lock
+.*.sw*
