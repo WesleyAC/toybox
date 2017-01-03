@@ -1,8 +1,13 @@
 use std::collections::HashMap;
 use std::char;
+use std::io;
 
 fn main() {
-    let program_string = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+    let mut program_string = String::new();
+    println!("Enter the brainfuck program:");
+    io::stdin().read_line(&mut program_string)
+        .expect("Failed to read line!");
+
     let mut program: Vec<char> = vec![];
     for command in program_string.chars() {
         program.push(command);
