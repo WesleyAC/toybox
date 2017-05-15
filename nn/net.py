@@ -8,42 +8,54 @@ def sigmoid_prime(x):
 
 
 class NeuralNet(object):
-    def __init__(self, num_input, num_hidden, num_output):
-        self.syn0 = 2*np.random.random((num_input, num_hidden)) - 1
-        self.syn1 = 2*np.random.random((num_hidden, num_output)) - 1
+    def __init__(self, num_input, num_hidden_layers, num_neurons_per_layer, num_output):
+        self.synapses = []
+
+        self.synapses.append(2*np.random.random((num_input, num_neurons_per_layer)) - 1)
+
+        for i in xrange(num_hidden_layers-1):
+            self.synapses.append(2*np.random.random((num_neurons_per_layer, num_neurons_per_layer)) - 1)
+
+        self.synapses.append(2*np.random.random((num_neurons_per_layer, num_output)) - 1)
 
     def forward(self, inpt):
-        l1 = sigmoid(np.dot(inpt, self.syn0))
-        l2 = sigmoid(np.dot(l1, self.syn1))
+        past_input = [inpt]
+        for synapse in self.synapses:
+            past_input.append(sigmoid(np.dot(past_input[-1], synapse)))
 
-        return (inpt, l1, l2)
+        return past_input
 
     def learn(self, inputs, outputs):
-        l0, l1, l2 = self.forward(inputs)
+        results = self.forward(inputs)
 
-        l2_error = outputs - l2
-        l2_delta = l2_error * sigmoid_prime(l2)
-        l1_error = np.dot(l2_delta, self.syn1.T)
-        l1_delta = l1_error * sigmoid_prime(l1)
+        deltas = []
 
-        self.syn0 += np.dot(l0.T, l1_delta)
-        self.syn1 += np.dot(l1.T, l2_delta)
+        output_error = outputs - results[-1]
+        deltas.append(output_error * sigmoid_prime(results[-1]))
+
+        for index,result in enumerate(reversed(results[:-1])):
+            error = np.dot(deltas[-1], self.synapses[-index-1].T)
+            deltas.append(error* sigmoid_prime(result))
+
+        deltas.reverse()
+
+        for index,synapse in enumerate(self.synapses):
+            synapse += np.dot(results[index].T, deltas[index+1])
 
     def error(self, inputs, outputs):
-        l0, l1, l2 = self.forward(inputs)
+        results = self.forward(inputs)
 
-        l2_error = outputs - l2
+        output_error = outputs - results[-1]
 
-        return np.mean(np.abs(l2_error))
+        return np.mean(np.abs(output_error))
 
 
-
-net = NeuralNet(2, 3, 1)
+net = NeuralNet(2, 1, 3, 1)
 
 inputs = np.array([[1,1],
-                  [0,0],
-                  [1,0],
-                  [0,1]])
+                   [0,0],
+                   [1,0],
+                   [0,1]])
 
 outputs = np.array([[0],
                     [0],
@@ -54,7 +66,7 @@ print("error: {}".format(net.error(inputs, outputs)))
 for inpt in inputs:
     print(net.forward(inpt))
 
-for i in xrange(1000):
+for i in xrange(100000):
     net.learn(inputs, outputs)
 
 print("trained")
