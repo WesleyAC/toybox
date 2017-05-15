@@ -6,7 +6,6 @@ def sigmoid(x):
 def sigmoid_prime(x):
     return x*(1-x)
 
-
 class NeuralNet(object):
     def __init__(self, num_input, num_hidden_layers, num_neurons_per_layer, num_output):
         self.synapses = []
@@ -48,28 +47,3 @@ class NeuralNet(object):
         output_error = outputs - results[-1]
 
         return np.mean(np.abs(output_error))
-
-
-net = NeuralNet(2, 1, 3, 1)
-
-inputs = np.array([[1,1],
-                   [0,0],
-                   [1,0],
-                   [0,1]])
-
-outputs = np.array([[0],
-                    [0],
-                    [1],
-                    [1]])
-print("untrained")
-print("error: {}".format(net.error(inputs, outputs)))
-for inpt in inputs:
-    print(net.forward(inpt))
-
-for i in xrange(100000):
-    net.learn(inputs, outputs)
-
-print("trained")
-print("error: {}".format(net.error(inputs, outputs)))
-for inpt in inputs:
-    print(net.forward(inpt))
