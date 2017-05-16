@@ -18,7 +18,7 @@ for inpt in inputs:
     print(net.forward(inpt))
 
 for i in xrange(100000):
-    net.learn(inputs, outputs)
+    net.learn(inputs, outputs, 1.0)
 
 print("trained")
 print("error: {}".format(net.error(inputs, outputs)))

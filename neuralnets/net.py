@@ -24,7 +24,7 @@ class NeuralNet(object):
 
         return past_input
 
-    def learn(self, inputs, outputs):
+    def learn(self, inputs, outputs, rate):
         results = self.forward(inputs)
 
         deltas = []
@@ -39,7 +39,7 @@ class NeuralNet(object):
         deltas.reverse()
 
         for index,synapse in enumerate(self.synapses):
-            synapse += np.dot(results[index].T, deltas[index+1])
+            synapse += np.dot(results[index].T, deltas[index+1]) * rate
 
     def error(self, inputs, outputs):
         results = self.forward(inputs)
