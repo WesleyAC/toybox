@@ -61,3 +61,20 @@ class Game(object):
             sum += self.board[row][col+1]
 
         return sum
+
+    def get_ml_output_at_location(self, row, col):
+        if self.known[row][col]:
+            if self.board[row][col]:
+                return [0]*9
+            else:
+                num = self.get_num_surrounding_bombs(row, col)
+                return [0]*(num+1) + [1] + [0]*(8-num)
+        else:
+            return [1] + [0]*8
+
+    def output_ml(self):
+        output = []
+        for rindex,row in enumerate(self.board):
+            for cindex,col in enumerate(row):
+                    output += self.get_ml_output_at_location(rindex, cindex)
+        return output
