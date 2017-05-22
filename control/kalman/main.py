@@ -32,7 +32,8 @@ Bc = np.asarray([[0],
                  [1/m]])
 Cc = np.asarray([[1, 0]])
 Dc = np.asarray([0])
-dt = 1. / 200
+freq = 200
+dt = 1. / freq
 
 F, B, _, _, _ = signal.cont2discrete((Ac, Bc, Cc, Dc), dt)
 
@@ -76,7 +77,7 @@ def run_controller_kalman(y, prev_y):
 
     return u
 
-def sim(A, B, time, x0):
+def sim(A, B, time, x0, controller):
     x = np.asmatrix(x0)
     prev_y = np.dot(H, x)
     x_out = []
@@ -87,7 +88,7 @@ def sim(A, B, time, x0):
     for t in xrange(time):
         x_hat = x + ((np.random.random((2,1)) - 0.5) * 0.05)
         y = np.dot(H, x_hat)
-        u = run_controller_kalman(y, prev_y)
+        u = controller(y, prev_y)
         x = np.dot(A, x) + np.dot(B, u)
 
         x_out.append(x)
@@ -116,5 +117,6 @@ def plot(output):
     plt.show()
 
 if __name__ == '__main__':
-    plot(sim(F, B, 200*20, [[5], [0]]))
+    plot(sim(F, B, freq*20, [[5], [0]], run_controller_kalman))
+    plot(sim(F, B, freq*20, [[5], [0]], run_controller_no_observer))
 
