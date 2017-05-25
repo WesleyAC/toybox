@@ -14,7 +14,7 @@ outputs = np.array([[0],
                     [1],
                     [1]])
 
-for i in xrange(50000):
+for i in xrange(80000):
     if i % 100 == 0 and output_dot:
         open("/tmp/xor{:05d}graph".format(i), mode="w").write(net.output_dot((inputs,outputs)))
     net.learn(inputs, outputs, 0.05)
