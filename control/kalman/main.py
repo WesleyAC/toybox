@@ -23,9 +23,9 @@ import matplotlib.pyplot as plt
 # K - Kalman gain
 
 
-k = 1.0
-c = 2.0
-m = 4.0
+k = 8.0
+c = 10.0
+m = 15.0
 Ac = np.asarray([[0,    1],
                  [-k/m, -c/m]])
 Bc = np.asarray([[0],
@@ -54,7 +54,7 @@ def run_controller_no_observer(y, prev_y):
     u = np.dot(-K, x_hat)
     return u
 
-prev_x_hat = [[5], [0]]
+prev_x_hat = [[10], [0]]
 prev_u = 0
 prev_P = [[0,0],[0,0]]
 
@@ -88,7 +88,7 @@ def sim(A, B, time, x0, controller):
     for t in xrange(time):
         x_hat = x + ((np.random.random((2,1)) - 0.5) * 0.05)
         y = np.dot(H, x_hat)
-        u = controller(y, prev_y)
+        u = np.clip(controller(y, prev_y), -40, 40)
         x = np.dot(A, x) + np.dot(B, u)
 
         x_out.append(x)
@@ -117,6 +117,6 @@ def plot(output):
     plt.show()
 
 if __name__ == '__main__':
-    plot(sim(F, B, freq*20, [[5], [0]], run_controller_kalman))
-    plot(sim(F, B, freq*20, [[5], [0]], run_controller_no_observer))
+    plot(sim(F, B, freq*6, [[10], [0]], run_controller_kalman))
+    plot(sim(F, B, freq*6, [[10], [0]], run_controller_no_observer))
 
