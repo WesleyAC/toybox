@@ -3,3 +3,4 @@ rust_shell/Cargo.lock
 rust/*/target/*
 .*.sw*
 *.pyc
+.cache
