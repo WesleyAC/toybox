@@ -36,7 +36,7 @@ class NeuralNet(object):
 
         for index,result in enumerate(reversed(results[:-1])):
             error = np.dot(deltas[-1], self.weights[-index-1].T)
-            deltas.append(error* sigmoid_prime(result))
+            deltas.append(error * sigmoid_prime(result))
 
         deltas.reverse()
 
