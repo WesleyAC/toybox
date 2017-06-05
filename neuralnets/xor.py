@@ -2,7 +2,7 @@ import numpy as np
 from net import NeuralNet
 
 net = NeuralNet(2, 1, 3, 1, 342047)
-output_dot = True
+output_dot = False
 
 inputs = np.array([[1,1],
                    [0,0],
@@ -15,8 +15,10 @@ outputs = np.array([[0],
                     [1]])
 
 for i in xrange(80000):
-    if i % 100 == 0 and output_dot:
-        open("/tmp/xor{:05d}graph".format(i), mode="w").write(net.output_dot((inputs,outputs)))
+    if i % 100 == 0:
+        print("epoch: {}\terror: {}".format(i, net.error(inputs, outputs)))
+        if output_dot:
+            open("/tmp/xor{:05d}graph".format(i), mode="w").write(net.output_dot((inputs,outputs)))
     net.learn(inputs, outputs, 0.05)
 
 print("trained")
