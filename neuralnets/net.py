@@ -6,6 +6,12 @@ def sigmoid(x):
 def sigmoid_prime(x):
     return x*(1-x)
 
+def relu(x):
+    return x if x > 0 else 0
+
+def relu_prime(x):
+    return 1 if x > 0 else 0
+
 class NeuralNet(object):
     def __init__(self, num_input, num_hidden_layers, num_neurons_per_layer, num_output, seed=-1):
         if seed != -1:
