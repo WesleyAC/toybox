@@ -1,9 +1,7 @@
-extern crate nalgebra as na;
 extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
-extern crate alga;
 
 use opengl_graphics::{GlGraphics, OpenGL};
 use glutin_window::GlutinWindow;
@@ -11,11 +9,43 @@ use piston::window::WindowSettings;
 use piston::event_loop::{Events, EventSettings};
 use piston::input::*;
 
-use alga::linear::Transformation;
+struct Point {
+    x: f64,
+    y: f64,
+    z: f64
+}
+
+impl Point {
+    fn rotate(&self, x: f64, y: f64, z: f64) -> Point {
+        let mut rp = Point { x: self.x, y: self.y, z: self.z };
+
+        let xn = rp.x * z.cos() - rp.y * z.sin();
+        let yn = rp.x * z.sin() + rp.y * z.cos();
+        rp.x = xn;
+        rp.y = yn;
+
+        let xn = rp.x * y.cos() - rp.z * y.sin();
+        let zn = rp.x * y.sin() + rp.z * y.cos();
+        rp.x = xn;
+        rp.z = zn;
+
+        let zn = rp.z * x.cos() - rp.y * x.sin();
+        let yn = rp.z * x.sin() + rp.y * x.cos();
+        rp.z = zn;
+        rp.y = yn;
+
+        rp
+    }
+
+    fn translate(&self, x: f64, y: f64, z: f64) -> Point {
+        let rp = Point { x: self.x + x, y: self.y + y, z: self.z + z };
+        rp
+    }
+}
 
 struct Edge<'a> {
-    p1: &'a na::Point3<f64>,
-    p2: &'a na::Point3<f64>
+    p1: &'a Point,
+    p2: &'a Point
 }
 
 struct Model<'a> {
@@ -34,14 +64,17 @@ impl<'a> App<'a> {
             // Clear the screen.
             graphics::clear([0.7, 0.6, 0.75, 1.0], gl);
 
-            let proj = na::Orthographic3::new(1.0, 2.0, -3.0, -2.5, 10.0, 900.0);
-            let rotation = na::Rotation3::from_euler_angles(1.0, 1.0, 1.0);
             for edge in &model.edges {
-                let p1 = proj.project_point(&rotation.transform_point(edge.p1));
-                let p2 = proj.project_point(&rotation.transform_point(edge.p2));
+                let mut p1_t = edge.p1.rotate(1.0, 1.0, 1.0);
+                let mut p2_t = edge.p2.rotate(1.0, 1.0, 1.0);
+
+                let p1_x = p1_t.x + p1_t.z / 4.0;
+                let p1_y = p1_t.y + p1_t.z / 4.0;
+                let p2_x = p2_t.x + p2_t.z / 4.0;
+                let p2_y = p2_t.y + p2_t.z / 4.0;
                 graphics::line([0.0, 0.0, 0.0, 1.0],
                                1.0,
-                               [p1[0],p1[1],p2[0],p2[1]],
+                               [p1_x + 400.0, p1_y + 300.0, p2_x + 400.0, p2_y + 300.0],
                                c.transform, gl);
             }
         });
@@ -50,14 +83,14 @@ impl<'a> App<'a> {
 
 fn main() {
     let nodes = vec![
-        na::Point3::new(10.0, 50.0, 50.0),
-        na::Point3::new(10.0, 50.0, 10.0),
-        na::Point3::new(10.0, 10.0, 50.0),
-        na::Point3::new(10.0, 10.0, 10.0),
-        na::Point3::new(50.0, 50.0, 50.0),
-        na::Point3::new(50.0, 50.0, 10.0),
-        na::Point3::new(50.0, 10.0, 50.0),
-        na::Point3::new(50.0, 10.0, 10.0)
+        Point {x: -50.0, y: 50.0,  z: 50.0},
+        Point {x: -50.0, y: 50.0,  z: -50.0},
+        Point {x: -50.0, y: -50.0, z: 50.0},
+        Point {x: -50.0, y: -50.0, z: -50.0},
+        Point {x: 50.0,  y: 50.0,  z: 50.0},
+        Point {x: 50.0,  y: 50.0,  z: -50.0},
+        Point {x: 50.0,  y: -50.0, z: 50.0},
+        Point {x: 50.0,  y: -50.0, z: -50.0}
     ];
     let edges = vec![
         Edge { p1: &nodes[0], p2: &nodes[1] },
