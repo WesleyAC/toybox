@@ -3,12 +3,15 @@ extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
+extern crate alga;
 
 use opengl_graphics::{GlGraphics, OpenGL};
 use glutin_window::GlutinWindow;
 use piston::window::WindowSettings;
 use piston::event_loop::{Events, EventSettings};
 use piston::input::*;
+
+use alga::linear::Transformation;
 
 struct Edge<'a> {
     p1: &'a na::Point3<f64>,
@@ -31,10 +34,14 @@ impl<'a> App<'a> {
             // Clear the screen.
             graphics::clear([0.7, 0.6, 0.75, 1.0], gl);
 
+            let proj = na::Orthographic3::new(1.0, 2.0, -3.0, -2.5, 10.0, 900.0);
+            let rotation = na::Rotation3::from_euler_angles(1.0, 1.0, 1.0);
             for edge in &model.edges {
+                let p1 = proj.project_point(&rotation.transform_point(edge.p1));
+                let p2 = proj.project_point(&rotation.transform_point(edge.p2));
                 graphics::line([0.0, 0.0, 0.0, 1.0],
                                1.0,
-                               [edge.p1[0],edge.p1[1],edge.p2[0],edge.p2[1]],
+                               [p1[0],p1[1],p2[0],p2[1]],
                                c.transform, gl);
             }
         });
@@ -43,14 +50,14 @@ impl<'a> App<'a> {
 
 fn main() {
     let nodes = vec![
-        na::Point3::new(0.0,  50.0, 50.0),
-        na::Point3::new(0.0,  50.0, 0.0 ),
-        na::Point3::new(0.0,  0.0,  50.0),
-        na::Point3::new(0.0,  0.0,  0.0 ),
+        na::Point3::new(10.0, 50.0, 50.0),
+        na::Point3::new(10.0, 50.0, 10.0),
+        na::Point3::new(10.0, 10.0, 50.0),
+        na::Point3::new(10.0, 10.0, 10.0),
         na::Point3::new(50.0, 50.0, 50.0),
-        na::Point3::new(50.0, 50.0, 0.0 ),
-        na::Point3::new(50.0, 0.0,  50.0),
-        na::Point3::new(50.0, 0.0,  0.0 )
+        na::Point3::new(50.0, 50.0, 10.0),
+        na::Point3::new(50.0, 10.0, 50.0),
+        na::Point3::new(50.0, 10.0, 10.0)
     ];
     let edges = vec![
         Edge { p1: &nodes[0], p2: &nodes[1] },

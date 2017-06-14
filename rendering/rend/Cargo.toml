@@ -6,6 +6,7 @@ authors = ["Wesley Aptekar-Cassels <W.Aptekar@gmail.com>"]
 [dependencies]
 
 nalgebra = "0.12.3"
+alga = "0.5.1"
 
 piston = "0.32.0"
 piston2d-graphics = "0.21.1"

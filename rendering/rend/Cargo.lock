@@ -2,6 +2,7 @@
 name = "rend"
 version = "0.1.0"
 dependencies = [
+ "alga 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "nalgebra 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston 0.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-graphics 0.21.1 (registry+https://github.com/rust-lang/crates.io-index)",
