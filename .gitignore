@@ -4,3 +4,4 @@ rust/*/target/*
 .*.sw*
 *.pyc
 .cache
+rendering/rend/target/*
