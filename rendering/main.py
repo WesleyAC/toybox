@@ -1,14 +1,15 @@
-from wireframe import Node, Edge, Model
+from wireframe import Model
+from viewer import Viewer
 
 if __name__ == '__main__':
-    cube_nodes = [[0,0,0],
-                  [1,0,0],
-                  [0,1,0],
-                  [1,1,0],
-                  [1,0,1],
-                  [0,1,1],
-                  [1,1,1],
-                  [1,1,1]]
+    cube_nodes = [(50, 50, 50 ),
+                  (100,50, 50 ),
+                  (50, 100,50 ),
+                  (100,100,50 ),
+                  (100,50, 100),
+                  (50, 100,100),
+                  (100,100,100),
+                  (100,100,100)]
     cube_edges = [(0,7),
                   (2,5),
                   (1,4),
@@ -22,3 +23,5 @@ if __name__ == '__main__':
                   (4,6),
                   (5,7)]
     cube = Model(cube_nodes, cube_edges)
+    viewer = Viewer([cube])
+    viewer.run()
