@@ -1,0 +1,24 @@
+from wireframe import Node, Edge, Model
+
+if __name__ == '__main__':
+    cube_nodes = [[0,0,0],
+                  [1,0,0],
+                  [0,1,0],
+                  [1,1,0],
+                  [1,0,1],
+                  [0,1,1],
+                  [1,1,1],
+                  [1,1,1]]
+    cube_edges = [(0,7),
+                  (2,5),
+                  (1,4),
+                  (3,6),
+                  (7,4),
+                  (5,6),
+                  (0,1),
+                  (2,3),
+                  (0,2),
+                  (1,3),
+                  (4,6),
+                  (5,7)]
+    cube = Model(cube_nodes, cube_edges)
