@@ -5,3 +5,4 @@ rust/*/target/*
 *.pyc
 .cache
 rendering/rend/target/*
+rendering/rend/Cargo.lock
