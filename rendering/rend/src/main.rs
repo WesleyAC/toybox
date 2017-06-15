@@ -56,7 +56,10 @@ struct Model<'a> {
 struct Viewport {
     x_rot: f64,
     y_rot: f64,
-    z_rot: f64
+    z_rot: f64,
+    x_trans: f64,
+    y_trans: f64,
+    z_trans: f64
 }
 
 pub struct App<'a> {
@@ -74,13 +77,13 @@ impl<'a> App<'a> {
             graphics::clear([0.7, 0.6, 0.75, 1.0], gl);
 
             for edge in &model.edges {
-                let p1_t = edge.p1.rotate(vp.x_rot, vp.y_rot, vp.z_rot);
-                let p2_t = edge.p2.rotate(vp.x_rot, vp.y_rot, vp.z_rot);
+                let p1_t = edge.p1.translate(vp.x_trans, vp.y_trans, vp.z_trans).rotate(vp.x_rot, vp.y_rot, vp.z_rot);
+                let p2_t = edge.p2.translate(vp.x_trans, vp.y_trans, vp.z_trans).rotate(vp.x_rot, vp.y_rot, vp.z_rot);
 
-                let p1_x = p1_t.x;
-                let p1_y = p1_t.y;
-                let p2_x = p2_t.x;
-                let p2_y = p2_t.y;
+                let p1_x = p1_t.x * 256.0 / p1_t.z;
+                let p1_y = p1_t.y * 256.0 / p1_t.z;
+                let p2_x = p2_t.x * 256.0 / p2_t.z;
+                let p2_y = p2_t.y * 256.0 / p2_t.z;
                 graphics::line([0.0, 0.0, 0.0, 1.0],
                                0.5,
                                [p1_x + 400.0, p1_y + 300.0, p2_x + 400.0, p2_y + 300.0],
@@ -105,6 +108,10 @@ impl<'a> App<'a> {
             self.vp.z_rot += 0.05;
         } else if button == Keyboard(Key::E) {
             self.vp.z_rot -= 0.05;
+        } else if button == Keyboard(Key::I) {
+            self.vp.z_trans += 1.0;
+        } else if button == Keyboard(Key::K) {
+            self.vp.z_trans -= 1.0;
         }
     }
 }
@@ -153,7 +160,10 @@ fn main() {
     let vp = Viewport {
         x_rot: 0.0,
         y_rot: 0.0,
-        z_rot: 0.0
+        z_rot: 0.0,
+        x_trans: 0.0,
+        y_trans: 0.0,
+        z_trans: 500.0
     };
 
     let mut app = App {
