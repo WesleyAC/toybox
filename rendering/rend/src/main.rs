@@ -4,6 +4,9 @@ extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
 
+use std::io::BufReader;
+use std::io::BufRead;
+use std::fs::File;
 use opengl_graphics::{GlGraphics, OpenGL};
 use glutin_window::GlutinWindow;
 use piston::window::WindowSettings;
@@ -44,13 +47,15 @@ impl Point {
     }
 }
 
-struct Edge<'a> {
-    p1: &'a Point,
-    p2: &'a Point
+//TODO(Wesley) Merge point implementations
+struct Point2 {
+    x: f64,
+    y: f64
 }
 
-struct Model<'a> {
-    edges: Vec<Edge<'a>>
+struct Model {
+    points: Vec<Point>,
+    edges: Vec<(usize, usize)>
 }
 
 struct Viewport {
@@ -62,13 +67,13 @@ struct Viewport {
     z_trans: f64
 }
 
-pub struct App<'a> {
+pub struct App {
     gl: GlGraphics,
-    model: Model<'a>,
+    model: Model,
     vp: Viewport
 }
 
-impl<'a> App<'a> {
+impl App {
     fn render(&mut self, args: &RenderArgs) {
         let ref model = self.model;
         let ref vp = self.vp;
@@ -76,17 +81,20 @@ impl<'a> App<'a> {
             // Clear the screen.
             graphics::clear([0.7, 0.6, 0.75, 1.0], gl);
 
-            for edge in &model.edges {
-                let p1_t = edge.p1.translate(vp.x_trans, vp.y_trans, vp.z_trans).rotate(vp.x_rot, vp.y_rot, vp.z_rot);
-                let p2_t = edge.p2.translate(vp.x_trans, vp.y_trans, vp.z_trans).rotate(vp.x_rot, vp.y_rot, vp.z_rot);
+            let mut projected_points: Vec<Point2> = vec![];
+            for point in &model.points {
+                let pt = point.translate(vp.x_trans, vp.y_trans, vp.z_trans).rotate(vp.x_rot, vp.y_rot, vp.z_rot);
 
-                let p1_x = p1_t.x * 256.0 / p1_t.z;
-                let p1_y = p1_t.y * 256.0 / p1_t.z;
-                let p2_x = p2_t.x * 256.0 / p2_t.z;
-                let p2_y = p2_t.y * 256.0 / p2_t.z;
-                graphics::line([0.0, 0.0, 0.0, 1.0],
-                               0.5,
-                               [p1_x + 400.0, p1_y + 300.0, p2_x + 400.0, p2_y + 300.0],
+                let x = pt.x * 256.0 / pt.z;
+                let y = pt.y * 256.0 / pt.z;
+                projected_points.push(Point2 {x: x, y: y});
+            }
+            for edge in &model.edges {
+                graphics::line([0.0, 0.0, 0.0, 1.0], 0.5,
+                               [projected_points[edge.0].x + 400.0,
+                                projected_points[edge.0].y + 300.0,
+                                projected_points[edge.1].x + 400.0,
+                                projected_points[edge.1].y + 300.0],
                                c.transform, gl);
             }
         });
@@ -116,32 +124,42 @@ impl<'a> App<'a> {
     }
 }
 
+fn load_object(name: &str) -> Model {
+    let file = File::open(name).unwrap();
+
+    let mut points: Vec<Point> = vec![];
+    let mut edges: Vec<(usize, usize)> = vec![];
+
+    for line in BufReader::new(file).lines() {
+        let line = line.unwrap();
+        let items = line.split_whitespace();
+        let items = items.collect::<Vec<&str>>();
+        if items.len() > 0 {
+            match items[0] {
+                "v" =>  {
+
+                            points.push(Point {
+                                x: items[1].parse::<f64>().unwrap(),
+                                y: items[2].parse::<f64>().unwrap(),
+                                z: items[3].parse::<f64>().unwrap()});
+                        },
+                "f" =>  {
+                            edges.push((items[1].parse::<usize>().unwrap() - 1,
+                                        items[2].parse::<usize>().unwrap() - 1));
+                            edges.push((items[1].parse::<usize>().unwrap() - 1,
+                                        items[3].parse::<usize>().unwrap() - 1));
+                            edges.push((items[2].parse::<usize>().unwrap() - 1,
+                                        items[3].parse::<usize>().unwrap() - 1));
+                        },
+                _   =>  {}
+            };
+        }
+    }
+    Model { points: points, edges: edges }
+}
+
 fn main() {
-    let nodes = vec![
-        Point {x: -50.0, y: 50.0, z: 50.0},
-        Point {x: -50.0, y: 50.0, z: -50.0},
-        Point {x: -50.0, y: -50.0, z: 50.0},
-        Point {x: -50.0, y: -50.0, z: -50.0},
-        Point {x: 50.0, y: 50.0, z: 50.0},
-        Point {x: 50.0, y: 50.0, z: -50.0},
-        Point {x: 50.0, y: -50.0, z: 50.0},
-        Point {x: 50.0, y: -50.0, z: -50.0}
-    ];
-    let edges = vec![
-        Edge { p1: &nodes[0], p2: &nodes[1] },
-        Edge { p1: &nodes[2], p2: &nodes[3] },
-        Edge { p1: &nodes[4], p2: &nodes[5] },
-        Edge { p1: &nodes[6], p2: &nodes[7] },
-        Edge { p1: &nodes[0], p2: &nodes[2] },
-        Edge { p1: &nodes[4], p2: &nodes[6] },
-        Edge { p1: &nodes[1], p2: &nodes[3] },
-        Edge { p1: &nodes[5], p2: &nodes[7] },
-        Edge { p1: &nodes[0], p2: &nodes[4] },
-        Edge { p1: &nodes[2], p2: &nodes[6] },
-        Edge { p1: &nodes[1], p2: &nodes[5] },
-        Edge { p1: &nodes[3], p2: &nodes[7] }
-    ];
-    let cube = Model { edges: edges };
+    let cube = load_object("test.obj");
 
     // Rendering stuff
 
