@@ -2,21 +2,25 @@
 
 A collection of small toy programs
 
-## `bfdbg`
-
-`bfdbg` is a brainfuck interpreter and debugger.
-
 ## `neuralnets`
 
 `neuralnets` is where I play around with implementing neural network concepts from scratch in python.
 
+<img src="neuralnets/demo.gif" width="200">
+
 ## `control`
 
-`control` has scripts that I use to play around with control system topics. Right now it just has a script that runs a kalman filter, but more stuff will be added soon :)
+`control` has scripts that I use to play around with control system topics. This includes a simulation of a kalman filter, and a couple system models.
 
 ## `rendering`
 
 `rendering` has some experiments in 3d rendering, written in python and rust.
+
+<img src="rendering/demo.png" width="400">
+
+## `bfdbg`
+
+`bfdbg` is a brainfuck interpreter and debugger.
 
 ## `rust`
 
