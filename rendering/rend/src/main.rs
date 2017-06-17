@@ -159,7 +159,7 @@ fn load_object(name: &str) -> Model {
 }
 
 fn main() {
-    let cube = load_object("test.obj");
+    let cube = load_object("objs/test.obj");
 
     // Rendering stuff
 
