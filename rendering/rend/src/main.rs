@@ -117,9 +117,17 @@ impl App {
         } else if button == Keyboard(Key::E) {
             self.vp.z_rot -= 0.05;
         } else if button == Keyboard(Key::I) {
-            self.vp.z_trans += 1.0;
-        } else if button == Keyboard(Key::K) {
             self.vp.z_trans -= 1.0;
+        } else if button == Keyboard(Key::K) {
+            self.vp.z_trans += 1.0;
+        } else if button == Keyboard(Key::J) {
+            self.vp.x_trans -= 1.0;
+        } else if button == Keyboard(Key::L) {
+            self.vp.x_trans += 1.0;
+        } else if button == Keyboard(Key::U) {
+            self.vp.y_trans -= 1.0;
+        } else if button == Keyboard(Key::O) {
+            self.vp.y_trans += 1.0;
         }
     }
 }
