@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<?python
+import math
+r_middle = r_inner + (r_outer - r_inner) / 2
+r_outer_arc_top = r_outer - spacing
+r_outer_arc_bottom = r_middle + (spacing / 2)
+r_inner_arc_top = r_middle - (spacing / 2)
+r_inner_arc_bottom = r_inner + spacing
+
+r_outer_arc_top_ratio = r_outer_arc_top / r_outer
+r_outer_arc_bottom_ratio = r_outer_arc_bottom / r_outer
+r_inner_arc_top_ratio = r_inner_arc_top / r_outer
+r_inner_arc_bottom_ratio = r_inner_arc_bottom / r_outer
+
+click_angle = math.pi*2/num_clicks
+
+def t(x):
+    return (x * r_outer) + r_outer
+
+def t_dist(x):
+    return x * r_outer
+?>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:py="http://genshi.edgewall.org/" width="${r_outer*2}" height="${r_outer*2}">
+  <circle cx="${t(0)}" cy="${t(0)}" r="${t_dist(1)}" stroke="black" stroke-width="1" fill="none" />
+  <circle cx="${t(0)}" cy="${t(0)}" r="${1}" stroke="black" stroke-width="1" fill="none" />
+
+  <py:if test="debug">
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_middle}" stroke="blue" stroke-width="1" fill="none" />
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_inner}" stroke="blue" stroke-width="1" fill="none" />
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_inner_arc_top}" stroke="red" stroke-width="1" fill="none" />
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_inner_arc_bottom}" stroke="red" stroke-width="1" fill="none" />
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_outer_arc_top}" stroke="red" stroke-width="1" fill="none" />
+    <circle cx="${t(0)}" cy="${t(0)}" r="${r_outer_arc_bottom}" stroke="red" stroke-width="1" fill="none" />
+  </py:if>
+
+  <path py:for="n in range(0, num_clicks, 2)"
+        d="M ${t(math.cos(n*click_angle)*r_outer_arc_bottom_ratio)} ${t(math.sin(n*click_angle)*r_outer_arc_bottom_ratio)}
+           L ${t(math.cos(n*click_angle)*r_outer_arc_top_ratio)} ${t(math.sin(n*click_angle)*r_outer_arc_top_ratio)}
+           A ${r_outer_arc_top} ${r_outer_arc_top} 0 0 1 ${t(math.cos((n+1)*click_angle)*r_outer_arc_top_ratio)} ${t(math.sin((n+1)*click_angle)*r_outer_arc_top_ratio)}
+           L ${t(math.cos((n+1)*click_angle)*r_outer_arc_bottom_ratio)} ${t(math.sin((n+1)*click_angle)*r_outer_arc_bottom_ratio)}
+           A ${r_outer_arc_bottom} ${r_outer_arc_bottom} 0 0 0 ${t(math.cos(n*click_angle)*r_outer_arc_bottom_ratio)} ${t(math.sin(n*click_angle)*r_outer_arc_bottom_ratio)}" fill="none" stroke="black" stroke-width="1" />
+
+  <path py:for="n in range(0, num_clicks, 2)"
+        d="M ${t(math.cos(n*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)} ${t(math.sin(n*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)}
+           L ${t(math.cos(n*click_angle+(click_angle/2))*r_inner_arc_top_ratio)} ${t(math.sin(n*click_angle+(click_angle/2))*r_inner_arc_top_ratio)}
+           A ${r_inner_arc_top} ${r_inner_arc_top} 0 0 1 ${t(math.cos((n+1)*click_angle+(click_angle/2))*r_inner_arc_top_ratio)} ${t(math.sin((n+1)*click_angle+(click_angle/2))*r_inner_arc_top_ratio)}
+           L ${t(math.cos((n+1)*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)} ${t(math.sin((n+1)*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)}
+           A ${r_inner_arc_bottom} ${r_inner_arc_bottom} 0 0 0 ${t(math.cos(n*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)} ${t(math.sin(n*click_angle+(click_angle/2))*r_inner_arc_bottom_ratio)}" fill="none" stroke="black" stroke-width="1" />
+</svg>
