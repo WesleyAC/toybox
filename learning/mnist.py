@@ -2,6 +2,7 @@ import numpy as np
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.optimizers import Adam
 
@@ -25,13 +26,14 @@ Y_test = np_utils.to_categorical(y_test, 10)
 
 model = Sequential()
 
-model.add(Flatten(input_shape=(1,28,28)))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(128, activation='relu'))
+model.add(Convolution2D(32, kernel_size=(3, 3), activation="relu", input_shape=(1,28,28)))
+model.add(Convolution2D(32, kernel_size=(3, 3), activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(128, activation='softmax'))
+model.add(Dropout(0.5))
 model.add(Dense(10, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
