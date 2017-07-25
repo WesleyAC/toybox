@@ -6,3 +6,4 @@ rust/*/target/*
 .cache
 rendering/rend/target/*
 rendering/rend/Cargo.lock
+buffer/a.out
