@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <sys/param.h> // Provides min/max on most linux/bsd machines
 
 #define BUFFER_SIZE 255
 
@@ -20,15 +21,9 @@ int buffer_free_space(buffer buf) {
 }
 
 int buffer_put(buffer buf, char *data, int size) {
-  int free_space = buffer_free_space(buf);
-  if (size > free_space) {
-    size = free_space;
-  }
+  size = MIN(buffer_free_space(buf), size);
   int end = (buf.head < buf.tail) ? buf.tail : buf.size;
-  int first_write_size = end - buf.head;
-  if (first_write_size > size) {
-    first_write_size = size;
-  }
+  int first_write_size = MIN(end - buf.head, size);
   memcpy(buf.buf + buf.head, data, first_write_size);
   memcpy(buf.buf, data + first_write_size, size - first_write_size);
   return size;
