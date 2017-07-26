@@ -2,7 +2,7 @@
 #include <string.h>
 #include <sys/param.h> // Provides min/max on most linux/bsd machines
 
-#define BUFFER_SIZE 255
+#define BUFFER_SIZE 256
 
 typedef struct buffer buffer;
 struct buffer {
