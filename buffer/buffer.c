@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/param.h> // Provides min/max on most linux/bsd machines
-#include <stdbool.h>
 
 #define BUFFER_SIZE 8
 typedef struct buffer buffer;
