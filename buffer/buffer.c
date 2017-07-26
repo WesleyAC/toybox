@@ -3,12 +3,11 @@
 #include <sys/param.h> // Provides min/max on most linux/bsd machines
 
 #define BUFFER_SIZE 256
-
 typedef struct buffer buffer;
 struct buffer {
   char buf[BUFFER_SIZE];
-  int tail;
-  int head;
+  char tail;
+  char head;
 };
 
 int buffer_free_space(buffer *buf) {
