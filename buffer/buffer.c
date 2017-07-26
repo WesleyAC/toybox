@@ -8,28 +8,28 @@ struct buffer {
   char buf[BUFFER_SIZE];
   unsigned char tail;
   unsigned char head;
-  unsigned char items;
+  unsigned char num_items;
 };
 
 int buffer_put(buffer *const buf, const char *const data, int size) {
-  size = MIN(BUFFER_SIZE - buf->items, size);
+  size = MIN(BUFFER_SIZE - buf->num_items, size);
   int end = (buf->head < buf->tail) ? buf->tail : BUFFER_SIZE;
   int first_write_size = MIN(end - buf->head, size);
   memcpy(buf->buf + buf->head, data, first_write_size);
   memcpy(buf->buf + buf->head + first_write_size, data + first_write_size, size - first_write_size);
   buf->head = (buf->head + size) % BUFFER_SIZE;
-  buf->items += size;
+  buf->num_items += size;
   return size;
 }
 
 int buffer_get(buffer *const buf, char *const data, int size) {
-  size = MIN(buf->items, size);
+  size = MIN(buf->num_items, size);
   int end = (buf->head < buf->tail) ? BUFFER_SIZE : buf->head;
   int first_read_size = MIN(end - buf->tail, size);
   memcpy(data, buf->buf + buf->tail, first_read_size);
   memcpy(data + first_read_size, buf->buf + buf->tail + first_read_size, size - first_read_size);
   buf->tail = (buf->tail + size) % BUFFER_SIZE;
-  buf->items -= size;
+  buf->num_items -= size;
   return size;
 }
 
