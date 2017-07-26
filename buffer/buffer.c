@@ -10,7 +10,7 @@ struct buffer {
   char head;
 };
 
-int buffer_free_space(const buffer *buf) {
+int buffer_free_space(const buffer *const buf) {
   if (buf->head > buf->tail) {
     return (BUFFER_SIZE-1) - (buf->head - buf->tail);
   } else if (buf->head < buf->tail) {
@@ -20,11 +20,11 @@ int buffer_free_space(const buffer *buf) {
   }
 }
 
-int buffer_used_space(const buffer *buf) {
+int buffer_used_space(const buffer *const buf) {
   return BUFFER_SIZE - buffer_free_space(buf);
 }
 
-int buffer_put(buffer *const buf, const char *data, int size) {
+int buffer_put(buffer *const buf, const char *const data, int size) {
   size = MIN(buffer_free_space(buf), size);
   int end = (buf->head < buf->tail) ? buf->tail : BUFFER_SIZE;
   int first_write_size = MIN(end - buf->head, size);
