@@ -17,8 +17,7 @@ wire enable;
 
 reg [3:0] counter_out;
 
-always @ (posedge clock)
-begin: COUNTER
+always @ (posedge clock) begin
   if (reset == 1'b1) begin
     counter_out <= #1 4'b0000;
   end
