@@ -10,8 +10,8 @@ function love.load()
   touching_ground = true
   jumpcountdown = 0.25
 
-  objectfallcountdown = 5.0
-  objectfalltime = 5.0
+  objectfallcountdown = 4.0
+  objectfalltime = 4.0
 
   gameover = false
 
@@ -93,26 +93,27 @@ function love.update(dt)
 end
 
 function love.draw()
+  -- draw ball
+  love.graphics.setColor(193, 47, 14)
+  love.graphics.circle("fill", objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
+  fear = math.abs(objects.scale.body:getAngle()) * 2;
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.circle("fill", objects.ball.body:getX() - 7, objects.ball.body:getY() - 8, 5 + (2 * fear))
+  love.graphics.circle("fill", objects.ball.body:getX() + 7, objects.ball.body:getY() - 8, 5 + (2 * fear))
+  love.graphics.setColor(0, 0, 0)
+  love.graphics.circle("fill", objects.ball.body:getX() - 7, objects.ball.body:getY() - 8, 1 + (3 * fear))
+  love.graphics.circle("fill", objects.ball.body:getX() + 7, objects.ball.body:getY() - 8, 1 + (3 * fear))
+
+  love.graphics.setColor(50, 50, 50)
+  love.graphics.polygon("fill", objects.pivot.body:getWorldPoints(objects.pivot.shape:getPoints()))
+  love.graphics.polygon("fill", objects.scale.body:getWorldPoints(objects.scale.shape:getPoints()))
+
+  for useless,thing in pairs(shit) do
+    love.graphics.polygon("fill", thing:getBody():getWorldPoints(thing:getShape():getPoints()))
+  end
+
   if not gameover then
     love.graphics.print("SCORE: " .. round(score, 1), 10, 10, 0, 1, 1, 0, 0, 0, 0)
-    -- draw ball
-    love.graphics.setColor(193, 47, 14)
-    love.graphics.circle("fill", objects.ball.body:getX(), objects.ball.body:getY(), objects.ball.shape:getRadius())
-    fear = math.abs(objects.scale.body:getAngle()) * 2;
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", objects.ball.body:getX() - 7, objects.ball.body:getY() - 8, 5 + (2 * fear))
-    love.graphics.circle("fill", objects.ball.body:getX() + 7, objects.ball.body:getY() - 8, 5 + (2 * fear))
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.circle("fill", objects.ball.body:getX() - 7, objects.ball.body:getY() - 8, 1 + (3 * fear))
-    love.graphics.circle("fill", objects.ball.body:getX() + 7, objects.ball.body:getY() - 8, 1 + (3 * fear))
-
-    love.graphics.setColor(50, 50, 50)
-    love.graphics.polygon("fill", objects.pivot.body:getWorldPoints(objects.pivot.shape:getPoints()))
-    love.graphics.polygon("fill", objects.scale.body:getWorldPoints(objects.scale.shape:getPoints()))
-
-    for useless,thing in pairs(shit) do
-      love.graphics.polygon("fill", thing:getBody():getWorldPoints(thing:getShape():getPoints()))
-    end
   else
     love.graphics.print("GAME OVER!", 10, 10, 0, 1, 1, 0, 0, 0, 0)
   end
