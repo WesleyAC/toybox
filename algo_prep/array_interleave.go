@@ -9,7 +9,7 @@ func max(a, b int) int {
 	return b
 }
 
-func splice(a []int, b []int) []int {
+func interleave(a []int, b []int) []int {
 	var output []int
 	out_size := max(len(a), len(b))
 	for i := 0; i < out_size; i++ {
@@ -26,5 +26,5 @@ func splice(a []int, b []int) []int {
 func main() {
 	a := [5]int{1, 2, 3, 4, 5}
 	b := [7]int{6, 7, 8, 9, 10, 11, 12}
-	fmt.Println(splice(a[:], b[:]))
+	fmt.Println(interleave(a[:], b[:]))
 }
