@@ -1,14 +1,15 @@
 #!/usr/bin/python
 
-import hashlib
-import shutil
-import tempfile
-import subprocess
-import os
-import time
+import hashlib, shutil, tempfile, subprocess, os, time, argparse
 
-filesystem_image = "ext4.img"
-filesystem_md5sum = "63ded6bd4c75fc8742add97c59b4b51c"
+parser = argparse.ArgumentParser(description="Mount filesystem using dmsetup and run test programs.")
+parser.add_argument("image_file")
+parser.add_argument("md5sum")
+
+args = parser.parse_args()
+
+filesystem_image = args.image_file
+filesystem_md5sum = args.md5sum
 error_block = (2389,1) #TODO(Wesley) multi-section errors
 
 # Check for root
