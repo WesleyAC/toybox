@@ -72,14 +72,30 @@ struct PrintList {
 
 template<class L>
 struct PrintList<0, L> {
-	static inline void print() {}
+	static inline void print() {
+		std::cout << std::endl;
+	}
+};
+
+
+template<unsigned N, class L>
+struct RunSim {
+	static void run() {
+		PrintList<11, L>::print();
+		typedef typename Step<L, Val<0> >::result next;
+		RunSim<N-1, next>::run();
+	}
+};
+
+template<class L>
+struct RunSim<0, L> {
+	static inline void run() {}
 };
 
 int main() {
 	typedef List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<1>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, Nil>>>>>>>>>>> testlist;
-	typedef Step<testlist, Val<0> >::result next;
 
-	PrintList<11, next>::print();
+	RunSim<7, testlist>::run();
 
 	return 0;
 }
