@@ -1,14 +1,20 @@
-#include <iostream>
+#include <stdio.h>
 
-template <bool N>
+typedef enum {
+	NO = ' ',
+	YES = '#',
+	NEWLINE = '\n'
+} val;
+
+template <val N>
 struct Val {
-	static const bool value = N;
+	static const val value = N;
 };
 
 struct Nil {
 	typedef Nil Head;
 	typedef Nil Tail;
-	static const int value = 0; // HACK
+	static const val value = NO; // HACK
 };
 
 template <typename H, typename T>
@@ -30,22 +36,22 @@ struct Get<L, 0> {
 
 template <class A, class B, class C>
 struct StateOut {
-	static const int result = 1;
+	static const val result = YES;
 };
 
 template <class B>
-struct StateOut<Nil, B, Val<false> > {
-	static const int result = 0;
+struct StateOut<Nil, B, Val<NO> > {
+	static const val result = NO;
 };
 
 template <class B>
-struct StateOut<Nil, B, Val<true> > {
-	static const int result = 1;
+struct StateOut<Nil, B, Val<YES> > {
+	static const val result = YES;
 };
 
 template <class A, class B>
 struct StateOut<A, B, A> {
-	static const int result = 0;
+	static const val result = NO;
 };
 
 template <class L, class P>
@@ -65,7 +71,7 @@ struct Step<Nil, P> {
 template<unsigned N, class L>
 struct PrintList {
 	static void print() {
-		std::cout << Get<L, N-1>::result::value;
+		printf("%c", Get<L, N-1>::result::value);
 		PrintList<N-1, L>::print();
 	}
 };
@@ -73,7 +79,7 @@ struct PrintList {
 template<class L>
 struct PrintList<0, L> {
 	static inline void print() {
-		std::cout << std::endl;
+		printf("\n");
 	}
 };
 
@@ -82,7 +88,7 @@ template<unsigned N, class L>
 struct RunSim {
 	static void run() {
 		PrintList<11, L>::print();
-		typedef typename Step<L, Val<0> >::result next;
+		typedef typename Step<L, Val<NO> >::result next;
 		RunSim<N-1, next>::run();
 	}
 };
@@ -93,9 +99,9 @@ struct RunSim<0, L> {
 };
 
 int main() {
-	typedef List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<1>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, Nil>>>>>>>>>>> testlist;
+	typedef List<Val<NO>, List<Val<NO>, List<Val<NO>, List<Val<NO>, List<Val<NO>, List<Val<YES>, List<Val<NO>, List<Val<NO>, List<Val<NO>, List<Val<NO>, List<Val<NO>, Nil>>>>>>>>>>> state;
 
-	RunSim<7, testlist>::run();
+	RunSim<7, state>::run();
 
 	return 0;
 }
