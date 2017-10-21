@@ -1,8 +1,8 @@
 #include <iostream>
 
-template <int N>
-struct Int {
-	static const int value = N;
+template <bool N>
+struct Val {
+	static const bool value = N;
 };
 
 struct Nil {
@@ -34,12 +34,12 @@ struct StateOut {
 };
 
 template <class B>
-struct StateOut<Nil, B, Int<0> > {
+struct StateOut<Nil, B, Val<false> > {
 	static const int result = 0;
 };
 
 template <class B>
-struct StateOut<Nil, B, Int<1> > {
+struct StateOut<Nil, B, Val<true> > {
 	static const int result = 1;
 };
 
@@ -54,7 +54,7 @@ struct Step {
 	typedef typename L::Tail CTail;
 
 	typedef typename Step<CTail, CHead>::result Next;
-	typedef List<Int<StateOut<Int<CTail::Head::value>, Int<CHead::value>, Int<P::value> >::result >, Next> result;
+	typedef List<Val<StateOut<Val<CTail::Head::value>, Val<CHead::value>, Val<P::value> >::result >, Next> result;
 };
 
 template <class P>
@@ -63,20 +63,20 @@ struct Step<Nil, P> {
 };
 
 int main() {
-	typedef List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<1>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
-		List<Int<0>,
+	typedef List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<1>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
+		List<Val<0>,
 		Nil>>>>>>>>>>> testlist;
 
-	typedef Step<testlist, Int<0> >::result next;
+	typedef Step<testlist, Val<0> >::result next;
 	std::cout << Get<next, 0 >::result::value;
 	std::cout << Get<next, 1 >::result::value;
 	std::cout << Get<next, 2 >::result::value;
