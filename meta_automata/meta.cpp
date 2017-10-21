@@ -62,32 +62,24 @@ struct Step<Nil, P> {
 	typedef Nil result;
 };
 
-int main() {
-	typedef List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<1>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		List<Val<0>,
-		Nil>>>>>>>>>>> testlist;
+template<unsigned N, class L>
+struct PrintList {
+	static void print() {
+		std::cout << Get<L, N-1>::result::value;
+		PrintList<N-1, L>::print();
+	}
+};
 
+template<class L>
+struct PrintList<0, L> {
+	static inline void print() {}
+};
+
+int main() {
+	typedef List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<1>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, List<Val<0>, Nil>>>>>>>>>>> testlist;
 	typedef Step<testlist, Val<0> >::result next;
-	std::cout << Get<next, 0 >::result::value;
-	std::cout << Get<next, 1 >::result::value;
-	std::cout << Get<next, 2 >::result::value;
-	std::cout << Get<next, 3 >::result::value;
-	std::cout << Get<next, 4 >::result::value;
-	std::cout << Get<next, 5 >::result::value;
-	std::cout << Get<next, 6 >::result::value;
-	std::cout << Get<next, 7 >::result::value;
-	std::cout << Get<next, 8 >::result::value;
-	std::cout << Get<next, 9 >::result::value;
-	std::cout << Get<next, 10 >::result::value << std::endl;
+
+	PrintList<11, next>::print();
 
 	return 0;
 }
