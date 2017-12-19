@@ -56,23 +56,22 @@ fn lerp(start: Frame, end: Frame, progress: f64) -> Frame {
 fn main() {
     let width: u32 = 512;
     let height: u32 = 512;
-    let start_frame = Frame::new(-2.0, 1.0, 1.5, -1.5);
-    let end_frame = Frame::new(-1.425001, -1.42699, 0.000025, -0.000025);
-    let num_frames = 120;
+    let frame = Frame::new(-2.0, 1.0, 1.5, -1.5);
     let mut image = RgbImage::new(width, height);
-    for frame in 0..num_frames {
+    let max_iters = 30;
+    for iters in 0..max_iters {
         for y in 0..height {
             for x in 0..width {
-                let result = mandelbrot(Complex64::new(0.0,0.0), map_pixel(x, y, width, height, lerp(start_frame, end_frame, f64::from(frame)/f64::from(num_frames))), 120);
+                let result = mandelbrot(Complex64::new(0.0,0.0), map_pixel(x, y, width, height, frame), iters);
                 if let SetResult::NotInSet(n) = result {
-                    image.get_pixel_mut(x, y).data = [(n as u8),0,0];
+                    image.get_pixel_mut(x, y).data = [((n as f64)/(iters as f64) * 255.0) as u8,0,0];
                 } else {
                     image.get_pixel_mut(x, y).data = [0,0,0];
                 }
             }
         }
-        image.save(format!("/tmp/out/{:05}.png", frame)).unwrap();
-        print!("\r{}/{}", frame, num_frames);
+        image.save(format!("/tmp/out/{:05}.png", iters)).unwrap();
+        print!("\r{}/{}", iters, max_iters);
         io::stdout().flush().ok().expect("Could not flush stdout");
     }
 }
