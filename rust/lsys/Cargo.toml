@@ -1,0 +1,6 @@
+[package]
+name = "lsys"
+version = "0.1.0"
+authors = ["Wesley Aptekar-Cassels <W.Aptekar@gmail.com>"]
+
+[dependencies]
