@@ -1,7 +1,11 @@
+extern crate image;
+
 use std::io;
 use std::iter::FromIterator;
 use std::io::Write;
 use std::collections::HashMap;
+
+use image::RgbImage;
 
 struct LSystem {
     axiom: Vec<char>,
@@ -57,9 +61,71 @@ fn get_system() -> LSystem {
     LSystem::new(axiom, rules)
 }
 
+#[derive(Copy,Clone)]
+struct TurtleState {
+    x: u32,
+    y: u32,
+    theta: f64
+}
+
+fn draw_line(img: &mut RgbImage, x0: i32, y0: i32, x1: i32, y1: i32) {
+    let mut x0 = x0;
+    let mut y0 = y0;
+
+    let dx = if x0 > x1 { x0 - x1 } else { x1 - x0 };
+    let dy = if y0 > y1 { y0 - y1 } else { y1 - y0 };
+
+    let sx = if x0 < x1 { 1 } else { -1 };
+    let sy = if y0 < y1 { 1 } else { -1 };
+
+    let mut err = if dx > dy { dx } else {-dy} / 2;
+    let mut err2;
+
+    loop {
+        img.get_pixel_mut(x0 as u32, y0 as u32).data = [255, 255, 255];
+
+        if x0 == x1 && y0 == y1 { break };
+
+        err2 = 2 * err;
+
+        if err2 > -dx { err -= dy; x0 += sx; }
+        if err2 < dy { err += dx; y0 += sy; }
+    }
+}
+
+fn turtle_forward(turtle_state: &mut TurtleState, mut image: &mut RgbImage) {
+    let new_x = (turtle_state.x as i32) + ((f64::cos(turtle_state.theta)*10.0) as i32);
+    let new_y = (turtle_state.y as i32) + ((f64::sin(turtle_state.theta)*10.0) as i32);
+    draw_line(&mut image,
+              turtle_state.x as i32,
+              turtle_state.y as i32,
+              new_x,
+              new_y);
+    turtle_state.x = new_x as u32;
+    turtle_state.y = new_y as u32;
+}
+
 fn main() {
-    let sys = get_system();
+    let mut n = 0;
+    //let sys = get_system();
+    let mut rules = HashMap::new();
+    rules.insert('X', vec!['X','+','Y','F','+']);
+    rules.insert('Y', vec!['-','F','X','-','Y']);
+    let sys = LSystem::new(vec!['F','X'], rules);
+
     for state in sys {
-        println!("{}", String::from_iter(state.iter()));
+        let mut turtle_state = TurtleState { x: 1024, y: 1024, theta: 0.0 };
+        let mut image = RgbImage::new(2048, 2048);
+        for action in state {
+            match action {
+                'F' => { turtle_forward(&mut turtle_state, &mut image); },
+                '-' => { turtle_state.theta -= 3.1415 / 2.0; },
+                '+' => { turtle_state.theta += 3.1415 / 2.0; },
+                _   => {}
+            }
+        }
+        image.save(format!("/tmp/out/{:010}.png", n)).unwrap();
+        n += 1;
+        println!("{}", n);
     }
 }
